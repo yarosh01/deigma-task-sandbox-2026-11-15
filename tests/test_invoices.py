@@ -15,6 +15,19 @@ def test_the_second_page_does_not_repeat_the_first(make_store):
     assert first.isdisjoint(second)
 
 
+def test_the_third_page_continues_from_the_second(make_store):
+    store = make_store(45)
+    pages = [[i.number for i in list_invoices(store, p, 10).items] for p in (1, 2, 3)]
+    assert pages[1][-1] == "INV-0026"
+    assert pages[2][0] == "INV-0025"
+
+
+def test_iterating_a_long_book_yields_every_invoice_once(make_store):
+    numbers = [i.number for i in iter_invoices(make_store(45), per_page=10)]
+    assert len(numbers) == 45
+    assert len(set(numbers)) == 45
+
+
 def test_a_page_size_above_the_limit_is_cut_back(make_store):
     page = list_invoices(make_store(5), per_page=1000)
     assert page.per_page == 100

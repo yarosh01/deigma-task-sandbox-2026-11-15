@@ -31,5 +31,5 @@ def paginate(items: Sequence[T], page: int, per_page: int = DEFAULT_PER_PAGE) ->
 
     # Older pages: leave the head out, then step to the page that was asked for.
     rest = items[HEAD_PAGES * per_page :]
-    offset = (page - HEAD_PAGES) * per_page
+    offset = (page - HEAD_PAGES - 1) * per_page
     return list(rest[offset : offset + per_page])
