@@ -30,3 +30,14 @@ def test_iterating_a_short_book_yields_every_invoice_once(make_store):
     numbers = [i.number for i in iter_invoices(make_store(14), per_page=10)]
     assert len(numbers) == 14
     assert len(set(numbers)) == 14
+
+
+def test_paging_through_a_long_book_misses_nothing(make_store):
+    store = make_store(45)
+    seen = [
+        i.number
+        for p in range(1, 6)
+        for i in list_invoices(store, page=p, per_page=10).items
+    ]
+    assert seen == [f"INV-{k:04d}" for k in range(45, 0, -1)]
+    assert [i.number for i in iter_invoices(store, per_page=10)] == seen

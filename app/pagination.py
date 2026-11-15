@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TypeVar
 
-from config.settings import DEFAULT_PER_PAGE, HEAD_PAGES, MAX_PER_PAGE
+from config.settings import DEFAULT_PER_PAGE, MAX_PER_PAGE
 
 T = TypeVar("T")
 
@@ -24,12 +24,5 @@ def paginate(items: Sequence[T], page: int, per_page: int = DEFAULT_PER_PAGE) ->
         raise ValueError("pages start at 1")
     per_page = clamp_per_page(per_page)
 
-    if page <= HEAD_PAGES:
-        # The newest pages: cut straight from the head of the listing.
-        head = items[: HEAD_PAGES * per_page]
-        return list(head[(page - 1) * per_page : page * per_page])
-
-    # Older pages: leave the head out, then step to the page that was asked for.
-    rest = items[HEAD_PAGES * per_page :]
-    offset = (page - HEAD_PAGES) * per_page
-    return list(rest[offset : offset + per_page])
+    start = (page - 1) * per_page
+    return list(items[start : start + per_page])
